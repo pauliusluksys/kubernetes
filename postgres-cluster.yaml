@@ -1,0 +1,21 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: production-db
+  namespace: data-tier
+spec:
+  instances: 3  # High-Availability: 1 Primary write node + 2 Streaming Replicas
+
+  # The operator manages version choices automatically out-of-the-box
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.4
+
+  # Bootstrap an app database and dedicated application role user on initialization
+  bootstrap:
+    initdb:
+      database: app_production
+      owner: app_user
+
+  # Storage configuration for your persistent volumes
+  storage:
+    size: 20Gi
+    storageClass: standard  # Swap with your cloud provisioner (e.g., gp3, longhorn)

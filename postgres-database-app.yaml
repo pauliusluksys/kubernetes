@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: production-database
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/your-k8s-repo.git  # <-- Your Git Repo
+    targetRevision: main
+    path: path/to/your/manifests                           # <-- Folder holding postgres-cluster.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: data-tier
+  syncPolicy:
+    automated:
+      prune: false  # SAFETY FIRST: Never let automated Git pruning delete an entire production database!
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
